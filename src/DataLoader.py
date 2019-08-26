@@ -46,7 +46,6 @@ class DataLoader:
             fileNameSplit = lineSplit[0].split('-')
             fileName = filePath + 'words/' + fileNameSplit[0] + '/' + fileNameSplit[0] + '-' + fileNameSplit[1] + '/' + lineSplit[0] + '.png'
 
-
             # GT text are columns starting at 9
             gtText = ' '.join(lineSplit[8:])[:maxTextLen]
             chars = chars.union(set(list(gtText)))
@@ -54,11 +53,13 @@ class DataLoader:
             # put sample into list
             self.samples.append(Sample(gtText, fileName))
 
-
         # split into training and validation set: 95% - 5%
         splitIdx = int(0.95 * len(self.samples))
         self.trainSamples = self.samples[:splitIdx]
         self.validationSamples = self.samples[splitIdx:]
+
+        # number of randomly chosen samples per epoch for training
+        self.numTrainSamplesPerEpoch = 25000
 
         # start with train set
         self.trainSet()
@@ -68,10 +69,11 @@ class DataLoader:
 
 
     def trainSet(self):
-        "switch to training set"
+        "switch to randomly chosen training set"
         self.dataAugmentation = True
         self.currIdx = 0
-        self.samples = self.trainSamples
+        random.shuffle(self.trainSamples)
+        self.samples = self.trainSamples[:self.numTrainSamplesPerEpoch]
 
 
     def validationSet(self):
@@ -81,14 +83,6 @@ class DataLoader:
         self.samples = self.validationSamples
 
 
-    def shuffle(self):
-        "shuffle current set"
-        self.currIdx = 0
-        random.shuffle(self.samples)
-
-
-    def getIteratorInfo(self):
-        "current batch index and overall number of batches"
         return (self.currIdx // self.batchSize + 1, len(self.samples) // self.batchSize)
 
 
