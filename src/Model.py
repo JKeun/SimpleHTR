@@ -82,7 +82,7 @@ class Model:
         # BxTxC -> TxBxC
         ctcIn3dTBC = tf.transpose(ctcIn3d, [1, 0, 2])
         # ground truth text as sparse tensor (indices, values, dense_shape)
-        self.gtTexts = tf.SparseTensor(tf.placeholder(tf.int64, shape=[None,2]), tf.placeholder(tf.int32,[None]), tf.placeholder(tf.int64,[2]))
+        self.gtTexts = tf.SparseTensor(tf.placeholder(tf.int64, shape=[None, 2]), tf.placeholder(tf.int32, [None]), tf.placeholder(tf.int64, [2]))
         #calc loss for batch
         self.seqLen = tf.placeholder(tf.int32, [None])
         loss = tf.nn.ctc_loss(labels=self.gtTexts, inputs=ctcIn3dTBC, sequence_length=self.seqLen, ctc_merge_repeated=True)
@@ -177,5 +177,3 @@ class Model:
         "save model to file"
         self.snapID += 1
         self.saver.save(self.sess, '../model/snapshot', global_step=self.snapID)
-
-
