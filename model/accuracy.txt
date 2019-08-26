@@ -1,1 +1,1 @@
-Validation accuracy of saved model: 0.7266086956521739
+Validation character error rate of saved model: 28.394291%.
