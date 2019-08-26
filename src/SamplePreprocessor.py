@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 
-def preprocess(img, imgsize, dataAugmentation=False):
+def preprocess(img, imgSize, dataAugmentation=False):
     # there are damaged files in iam dataset - just use black image instead
     if img is None:
         img = np.zeros([imgSize[1], imgSize[0]])
@@ -15,7 +15,7 @@ def preprocess(img, imgsize, dataAugmentation=False):
         img = cv2.resize(img, (wStretch, img.shape[0])) # stretch horizontally by factor 0.5 .. 1.5
 
     # create target image and copy sample image into it
-    (wt, ht) = imgsize
+    (wt, ht) = imgSize
     (h, w) = img.shape
     fx = w / wt
     fy = h / ht

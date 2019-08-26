@@ -83,6 +83,8 @@ class DataLoader:
         self.samples = self.validationSamples
 
 
+    def getIteratorInfo(self):
+        "current batch index and overall number of batches"
         return (self.currIdx // self.batchSize + 1, len(self.samples) // self.batchSize)
 
 
