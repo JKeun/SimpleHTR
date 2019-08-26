@@ -10,9 +10,10 @@ class Model:
     imgSize = (128, 32)
     maxTextLen = 32
 
-    def __init__(self, charList, mustRestore=False):
+    def __init__(self, charList, useBeamSearch=False, mustRestore=False):
         "init model: add CNN, RNN and CTC and initialize TF"
         self.charList = charList
+        self.useBeamSearch = useBeamSearch
         self.mustRestore = mustRestore
         self.snapID = 0
 
@@ -38,7 +39,6 @@ class Model:
         cnnIn4d = tf.expand_dims(input=cnnIn3d, axis=3)
 
         # list of parameters for the layers
-        kernelVals = [5, 5, 3, 3, 3]
         featureVals = [1, 32, 64, 128, 128, 256] # channel
         strideVals = poolVals = [(2,2), (2,2), (1,2), (1,2), (1,2)]
         numLayers = len(strideVals)
@@ -46,7 +46,8 @@ class Model:
         # create layers
         pool = cnnIn4d # input to first CNN layer
         for i in range(numLayers):
-            kernel = tf.Variable(tf.truncated_normal([kernelVals[i], kernelVals[i], featureVals[i], featureVals[i+1]], stddev=0.1))
+            k = 5 # kernel size(square)
+            kernel = tf.Variable(tf.truncated_normal([k, k, featureVals[i], featureVals[i+1]], stddev=0.1))
             conv = tf.nn.conv2d(pool, kernel, padding='SAME', strides=(1,1,1,1))
             relu = tf.nn.relu(conv)
             pool = tf.nn.max_pool(relu, (1, poolVals[i][0], poolVals[i][1], 1), (1, strideVals[i][0], strideVals[i][1], 1), 'VALID')
@@ -86,7 +87,11 @@ class Model:
         #calc loss for batch
         self.seqLen = tf.placeholder(tf.int32, [None])
         loss = tf.nn.ctc_loss(labels=self.gtTexts, inputs=ctcIn3dTBC, sequence_length=self.seqLen, ctc_merge_repeated=True)
-        decoder = tf.nn.ctc_greedy_decoder(inputs=ctcIn3dTBC, sequence_length=self.seqLen)
+        #decoder: either best path decoding or beam search decoding
+        if self.useBeamSearch:
+            decoder = tf.nn.ctc_beam_search_decoder(inputs=ctcIn3dTBC, sequence_length=self.seqLen, beam_width=25, merge_repeated=False)
+        else:
+            decoder = tf.nn.ctc_greedy_decoder(inputs=ctcIn3dTBC, sequence_length=self.seqLen)
         return (tf.reduce_mean(loss), decoder)
 
 
