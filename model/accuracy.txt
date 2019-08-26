@@ -1,1 +1,1 @@
-Validation accuracy of saved model: 0.00608695652173913
+Validation accuracy of saved model: 0.8412173913043478

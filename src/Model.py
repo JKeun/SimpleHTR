@@ -95,6 +95,11 @@ class Model:
         print('Python: '+sys.version)
         print('Tensorflow: '+tf.__version__)
 
+        # if using CPU, put config=config in tf.Session()
+        config = tf.ConfigProto(
+            device_count = {'GPU': 0}
+        )
+
         sess = tf.Session() # TF session
 
         saver = tf.train.Saver(max_to_keep=1) # saver saves model to file

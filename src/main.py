@@ -8,8 +8,8 @@ from SamplePreprocessor import preprocess
 # filenames and paths to data
 fnCharList = '../model/charList.txt'
 fnAccuracy = '../model/accuracy.txt'
-fnTrain = '../data1/'
-fnInfer = '../data1/test.png'
+fnTrain = '../data/'
+fnInfer = '../data/test.png'
 
 
 def train(filePath):
