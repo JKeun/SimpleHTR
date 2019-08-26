@@ -20,7 +20,7 @@ def train(model, loader):
     epoch = 0 # number of training epochs since start
     bestCharErrorRate = float('inf') # best validation character error rate
     noImprovementSince = 0 # number of no improvement of character error rate
-    earlyStopping = 3 # stop training after this number of epochs without improvement
+    earlyStopping = 5 # stop training after this number of epochs without improvement
     while True:
         print('Epoch:', epoch)
         epoch += 1
